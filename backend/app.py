@@ -2,13 +2,12 @@ import csv
 import re
 import psycopg2
 
-# Connect to the database
 conn = psycopg2.connect(
     dbname="postgres",
     user="postgres",
     password="mysecretpassword",
     host="localhost",
-    port="5432"
+    port=5433
 )
 
 

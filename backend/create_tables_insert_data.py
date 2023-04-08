@@ -2,19 +2,12 @@ import csv
 import re
 import psycopg2
 
-def create_table(cur, table_name, schema):
-    cur.execute(f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}')")
-    table_exists = cur.fetchone()[0]
-    if table_exists:
-        cur.execute(f"DROP TABLE {table_name}")
-    cur.execute(schema)
-
 conn = psycopg2.connect(
     dbname="postgres",
     user="postgres",
     password="mysecretpassword",
     host="localhost",
-    port="5432"
+    port=5433
 )
 
 user_schema = """
@@ -28,7 +21,7 @@ user_schema = """
 
 moonboard_routes_schema = """
     CREATE TABLE moonboard_routes (
-        id SERIAL PRIMARY KEY,
+        id TEXT PRIMARY KEY,
         name TEXT,
         grade TEXT,
         board_angle INTEGER,
@@ -46,7 +39,7 @@ user_completed_problems_schema = """
     CREATE TABLE user_completed_problems (
         id SERIAL PRIMARY KEY,
         user_id INTEGER REFERENCES users(id),
-        route_id INTEGER REFERENCES moonboard_routes(id),
+        route_id TEXT REFERENCES moonboard_routes(id),
         completed_on TIMESTAMP,
         video_url VARCHAR,
         user_grade TEXT
@@ -56,18 +49,37 @@ user_completed_problems_schema = """
 user_lists_schema = """
     CREATE TABLE user_lists (
         id SERIAL PRIMARY KEY,
-        user_id integer REFERENCES users(id),
+        user_id INTEGER REFERENCES users(id),
         name text
     );
 """
 
 user_list_routes_schema = """
     CREATE TABLE user_list_routes (
-        user_list_id integer REFERENCES user_lists(id),
-        moonboard_route_id integer REFERENCES moonboard_routes(id),
+        user_list_id INTEGER REFERENCES user_lists(id),
+        moonboard_route_id TEXT REFERENCES moonboard_routes(id),
         PRIMARY KEY (user_list_id, moonboard_route_id)
     );
 """
+
+# Drop tables if they exist
+with conn.cursor() as cur:
+    cur.execute("DROP TABLE IF EXISTS user_list_routes")
+    cur.execute("DROP TABLE IF EXISTS user_lists")
+    cur.execute("DROP TABLE IF EXISTS user_completed_problems")
+    cur.execute("DROP TABLE IF EXISTS moonboard_routes")
+    cur.execute("DROP TABLE IF EXISTS users")
+
+# Create tables
+with conn.cursor() as cur:
+    cur.execute(user_schema)
+    cur.execute(moonboard_routes_schema)
+    cur.execute(user_completed_problems_schema)
+    cur.execute(user_lists_schema)
+    cur.execute(user_list_routes_schema)
+
+# Commit changes
+conn.commit()
 
 cur = conn.cursor()
 actual_lines = 0
