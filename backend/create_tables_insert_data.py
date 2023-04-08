@@ -42,7 +42,8 @@ user_completed_problems_schema = """
         route_id TEXT REFERENCES moonboard_routes(id),
         completed_on TIMESTAMP,
         video_url VARCHAR,
-        user_grade TEXT
+        user_grade TEXT,
+        notes VARCHAR
     );
 """
 
@@ -82,6 +83,22 @@ with conn.cursor() as cur:
 conn.commit()
 
 cur = conn.cursor()
+
+# Create test user
+# user_schema = """
+#     CREATE TABLE users (
+#         id SERIAL PRIMARY KEY,
+#         auth0_id text UNIQUE NOT NULL,
+#         email text NOT NULL,
+#         name text NOT NULL
+#     );
+# """
+
+test_user_create_query = """
+INSERT INTO users (auth0_id, email, name) VALUES (%s, %s, %s)
+"""
+cur.execute(test_user_create_query, ("test auth0_id", "xxx.yyy@zzz.com", "Egor Maksimenka"))
+
 actual_lines = 0
 added_lines = 0
 with open('mb_problems.csv', 'r') as f:

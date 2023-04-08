@@ -1,5 +1,6 @@
 from flask import current_app, request, jsonify, Blueprint
 from backend.db import get_db
+import datetime
 
 moonboard_bp = Blueprint('moonboard', __name__)
 
@@ -20,3 +21,63 @@ def get_n_moonboard_routes():
     cur.execute('SELECT * FROM moonboard_routes LIMIT %s', (int(request.args.get('N')),))
     routes = cur.fetchall()
     return jsonify(routes)
+
+@moonboard_bp.route('/moonboard_submit_send', methods=['POST'])
+def submit_sent_route():
+    conn = get_db()
+    cur = conn.cursor()
+
+    user_id = request.form.get('user_id')
+    route_id = request.form.get('curr_route_name') 
+    current_date = datetime.date.today()
+    formatted_date = current_date.strftime('%d/%m/%Y')
+    user_grade = request.form.get('user_grade')
+    user_notes = request.form.get('notes')
+    video_blob = request.form.get('submitted_video_blob')
+    video_url = process_video_blob(video_blob)
+
+    insert_query = """
+    INSERT INTO user_completed_problems (user_id, route_id, completed_on, video_url, user_grade, notes)
+    VALUES (%s, %s, %s, %s, %s, %s)
+    """
+    cur.execute(insert_query, (user_id, route_id, 
+                formatted_date, video_url, user_grade, user_notes))
+    conn.commit()
+
+    return {'message': 'Insert successful', 'data':(user_id, route_id, 
+                formatted_date, video_url, user_grade, user_notes)}
+
+@moonboard_bp.route('/moonboard_get_sent_routes', methods=['GET'])
+def get_sent_routes():
+    conn = get_db()
+    cur = conn.cursor()
+
+    select_query = """
+    SELECT *
+    FROM user_completed_problems 
+    WHERE user_id=%s
+    """
+    user_id = request.args.get('user_id')
+    cur.execute(select_query, (user_id,))
+    routes = cur.fetchall()
+    return jsonify(routes)
+
+@moonboard_bp.route('/moonboard_search_routes_substr', methods=['GET'])
+def search_moonboard_routes():
+    conn = get_db()
+    cur = conn.cursor()
+
+    search_query = """
+    SELECT * FROM moonboard_routes WHERE name::varchar ILIKE %s
+    """
+    search_term = request.args.get("term")
+    print(search_term)
+    result = cur.execute(search_query, ('%' + search_term + '%',))
+    routes = cur.fetchall()
+    return jsonify(routes)
+
+def process_video_blob(blob):
+    # TODO
+    return blob
+
+
