@@ -71,10 +71,47 @@ def search_moonboard_routes():
     SELECT * FROM moonboard_routes WHERE id ILIKE %s
     """
     search_term = request.args.get("term")
-    print(search_term)
-    result = cur.execute(search_query, ('%' + search_term + '%',))
+    cur.execute(search_query, ('%' + search_term + '%',))
     routes = cur.fetchall()
     return jsonify(routes)
+
+@moonboard_bp.route('/moonboard_retrieve_single_route_by_id', methods=['GET'])
+def retrieve_single_route_by_id():
+    conn = get_db()
+    cur = conn.cursor()
+
+    search_query = """
+    SELECT * FROM moonboard_routes WHERE id=%s
+    """
+
+    route_id = request.args.get("id")
+    cur.execute(search_query,(route_id,))
+    route_info = cur.fetchone()
+    return jsonify(route_info)
+
+
+# to add more filters later
+@moonboard_bp.route('/moonboard_retrieve_filtered_routes')
+def retrieve_filtered_routes():
+    conn = get_db()
+    cur = conn.cursor()
+
+    start_grade = str(request.args.get("start_grade", default="3"))
+    end_grade = str(request.args.get("end_grade", default="8A"))
+    benchmarks_only = request.args.get("benchmarks_only", default=False)
+    args = (start_grade, end_grade)
+
+    search_query = """
+    SELECT * FROM moonboard_routes WHERE grade BETWEEN %s AND %s 
+    """
+    if (benchmarks_only):
+        search_query += "AND benchmark=%s"
+        args += (str(benchmarks_only),)
+
+    cur.execute(search_query, args)
+    routes = cur.fetchall()
+    return jsonify(routes)
+    
 
 def process_video_blob(blob):
     # TODO
