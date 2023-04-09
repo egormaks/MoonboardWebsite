@@ -22,7 +22,6 @@ user_schema = """
 moonboard_routes_schema = """
     CREATE TABLE moonboard_routes (
         id TEXT PRIMARY KEY,
-        name TEXT,
         grade TEXT,
         board_angle INTEGER,
         moonboard_year INTEGER,

@@ -68,7 +68,7 @@ def search_moonboard_routes():
     cur = conn.cursor()
 
     search_query = """
-    SELECT * FROM moonboard_routes WHERE name::varchar ILIKE %s
+    SELECT * FROM moonboard_routes WHERE id ILIKE %s
     """
     search_term = request.args.get("term")
     print(search_term)
