@@ -105,7 +105,7 @@ def retrieve_filtered_routes():
     SELECT * FROM moonboard_routes WHERE grade BETWEEN %s AND %s 
     """
     if (benchmarks_only):
-        search_query += "AND benchmark=%s"
+        search_query += "AND is_benchmark=%s"
         args += (str(benchmarks_only),)
 
     cur.execute(search_query, args)
