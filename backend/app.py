@@ -1,10 +1,12 @@
 import csv
 from flask import Flask, jsonify, g
 from backend.moonboard import moonboard_bp
+from backend.users import users_bp
 from backend.db import get_db
 
 app = Flask(__name__)
 app.register_blueprint(moonboard_bp)
+app.register_blueprint(users_bp)
 
 @app.teardown_appcontext
 def close_connection(exception):

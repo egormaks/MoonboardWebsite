@@ -111,7 +111,6 @@ def retrieve_filtered_routes():
     cur.execute(search_query, args)
     routes = cur.fetchall()
     return jsonify(routes)
-    
 
 def process_video_blob(blob):
     # TODO
