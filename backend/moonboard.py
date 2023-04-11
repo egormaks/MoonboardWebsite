@@ -4,7 +4,7 @@ import datetime
 
 moonboard_bp = Blueprint('moonboard', __name__)
 
-@moonboard_bp.route('/moonboard_get_all', methods=['GET'])
+@moonboard_bp.route('/api/moonboard_get_all', methods=['GET'])
 def get_all_moonboard_routes():
     conn = get_db()
     cur = conn.cursor()
@@ -13,7 +13,7 @@ def get_all_moonboard_routes():
     routes = cur.fetchall()
     return jsonify(routes)
 
-@moonboard_bp.route('/moonboard_get_top_n', methods=['GET'])
+@moonboard_bp.route('/api/moonboard_get_top_n', methods=['GET'])
 def get_n_moonboard_routes():
     conn = get_db()
     cur = conn.cursor()
@@ -22,7 +22,7 @@ def get_n_moonboard_routes():
     routes = cur.fetchall()
     return jsonify(routes)
 
-@moonboard_bp.route('/moonboard_submit_send', methods=['POST'])
+@moonboard_bp.route('/api/moonboard_submit_send', methods=['POST'])
 def submit_sent_route():
     conn = get_db()
     cur = conn.cursor()
@@ -47,7 +47,7 @@ def submit_sent_route():
     return {'message': 'Insert successful', 'data':(user_id, route_id, 
                 formatted_date, video_url, user_grade, user_notes)}
 
-@moonboard_bp.route('/moonboard_get_sent_routes', methods=['GET'])
+@moonboard_bp.route('/api/moonboard_get_sent_routes', methods=['GET'])
 def get_sent_routes():
     conn = get_db()
     cur = conn.cursor()
@@ -62,7 +62,7 @@ def get_sent_routes():
     routes = cur.fetchall()
     return jsonify(routes)
 
-@moonboard_bp.route('/moonboard_search_routes_substr', methods=['GET'])
+@moonboard_bp.route('/api/moonboard_search_routes_substr', methods=['GET'])
 def search_moonboard_routes():
     conn = get_db()
     cur = conn.cursor()
@@ -75,7 +75,7 @@ def search_moonboard_routes():
     routes = cur.fetchall()
     return jsonify(routes)
 
-@moonboard_bp.route('/moonboard_retrieve_single_route_by_id', methods=['GET'])
+@moonboard_bp.route('/api/moonboard_retrieve_single_route_by_id', methods=['GET'])
 def retrieve_single_route_by_id():
     conn = get_db()
     cur = conn.cursor()
@@ -91,7 +91,7 @@ def retrieve_single_route_by_id():
 
 
 # to add more filters later
-@moonboard_bp.route('/moonboard_retrieve_filtered_routes')
+@moonboard_bp.route('/api/moonboard_retrieve_filtered_routes')
 def retrieve_filtered_routes():
     conn = get_db()
     cur = conn.cursor()

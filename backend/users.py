@@ -21,7 +21,7 @@ def requires_auth(f):
     
     return decorated 
 
-@users_bp.route('/users_get_all', methods=['GET'])
+@users_bp.route('/api/users_get_all', methods=['GET'])
 def get_all_users():
     conn = get_db()
     cur = conn.cursor()
@@ -30,7 +30,7 @@ def get_all_users():
     users = cur.fetchall()
     return jsonify(users)
 
-@users_bp.route('/users_get_curr_user_info', methods=['GET'])
+@users_bp.route('/api/users_get_curr_user_info', methods=['GET'])
 def get_user_info():
     conn = get_db()
     cur = conn.cursor()
@@ -42,7 +42,7 @@ def get_user_info():
     cur.execute(select_query, (user_id,))
     return jsonify(cur.fetchone())
 
-@users_bp.route('/create_user', methods=['POST'])
+@users_bp.route('/api/create_user', methods=['POST'])
 @requires_auth
 def create_user():
     auth0_id = request.json.get('auth0_id')
@@ -60,7 +60,7 @@ def create_user():
 
     return jsonify({'message': 'User created successfully'}), 201
 
-@users_bp.route('/create_user_list', methods=['POST'])
+@users_bp.route('/api/create_user_list', methods=['POST'])
 def create_user_list():
     conn = get_db()
     cur = conn.cursor()
@@ -76,7 +76,7 @@ def create_user_list():
 
     return jsonify({'message':'created new list: ' + list_name}), 201
 
-@users_bp.route('/get_all_user_lists', methods=['GET'])
+@users_bp.route('/api/get_all_user_lists', methods=['GET'])
 def get_user_lists():
     conn = get_db()
     cur = conn.cursor()
@@ -91,7 +91,7 @@ def get_user_lists():
     
     return jsonify(cur.fetchall())
 
-@users_bp.route('/add_to_list', methods=['POST'])
+@users_bp.route('/api/add_to_list', methods=['POST'])
 def add_to_list():
     conn = get_db()
     cur = conn.cursor()
@@ -107,7 +107,7 @@ def add_to_list():
 
     return jsonify({'message': 'added route to list successfully.'})
 
-@users_bp.route('/get_routes_from_list', methods=['GET'])
+@users_bp.route('/api/get_routes_from_list', methods=['GET'])
 def get_routes_from_list():
     conn = get_db()
     cur = conn.cursor()

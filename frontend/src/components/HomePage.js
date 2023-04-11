@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './HomePage.css';
-import { URL } from 'url';
-import http from 'http';
 
-
-function HomePage(props) {
+function HomePage() {
   const [responseData, setResponseData] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   const handleButtonClick = () => {
-    const url = 'http://localhost:5000/get_routes_from_list?user_id=1&list_name=test_list';
-    props.axiosInstance.get(url)
+    const url = 'http://localhost:5000/api/moonboard_get_top_n?N=10';
+    axios.get(url)
       .then(response => {
-        setResponseData(response.data);
+        console.log(response.data);
+        setResponseData(JSON.stringify(response.data, null, 2));
         setShowModal(true);
       })
       .catch(error => {
@@ -23,15 +22,15 @@ function HomePage(props) {
   return (
     <div>
       <div className="button-container">
-        <button className="Login">Button 1</button>
-        <button className="Sign Up">Button 2</button>
+        <button className="Login">Login</button>
+        <button className="Sign Up">Signup</button>
         <button className="Test Button" onClick={handleButtonClick}>Test Button</button>
       </div>
-      <h1 style={styles.h1}>Moonboard</h1>
-      <p style={styles.p}>Redesigned and Improved</p>
+      <h1 id="homepage-title">Moonboard</h1>
+      <p className="redesigned">Redesigned and Improved</p>
       {showModal && (
         <div className="modal">
-          <div className="modal-content">
+          <div className={`modal-content ${responseData ? 'modal-content-white' : ''}`}>
             <button onClick={() => setShowModal(false)}>Close</button>
             <p>{responseData}</p>
           </div>
@@ -42,3 +41,4 @@ function HomePage(props) {
 }
 
 export default HomePage;
+
